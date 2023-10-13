@@ -23,7 +23,7 @@ const filmy = [
     ochutnavka: 'Český krimi thriller s Karlem Rodenem.',
     popis:
       'Šokující živé vysílaní, které během chvíle změní životy několika nevinných lidí. Radek (Karel Roden) se po téměř dvaceti letech nečekaně vrací do svého rodného města, aby zde nalezl jistou mladou ženu a jednou provždy se vyrovnal se svou minulostí. V pátrání po neznámé ženě mu pomáhá Eva, ambiciózní rozhlasová moderátorka, která jeho příběh dostane do své živě vysílané noční show. Chtěla mít ve vysílání senzační událost, ale k jejímu zděšení a ke zděšení všech posluchačů začne na povrch vyplouvat něco, s čím nikdo nepočítal. Svůj plán připravoval Radek několik let a během jeho vyprávění je do pochmurného příběhu vtažena nejen ona sama, ale i pražská kriminálka a další aktéři dlouho zapomenutých událostí. Začíná napínavý boj o čas a o spravedlnost. Opravdu už je vše nenávratně promlčeno? (csfd.cz, Bontonfilm)',
-    premiera: '2022-04-28',
+    premiera: '2023-10-13',
   },
   {
     id: 'ona',
@@ -36,7 +36,7 @@ const filmy = [
     ochutnavka: 'Romantické Sci-Fi z blízké budoucnosti',
     popis:
       'Děj snímku Her se odehrává v Los Angeles v nedaleké budoucnosti. Theodore (Joaquin Phoenix) je komplikovaný a citlivý muž, který se živí psaním dojemných a osobních dopisů pro druhé. Se zlomeným srdcem po ukončení dlouhého vztahu se začne zajímat o nový, pokročilý operační systém, o kterém jeho výrobce tvrdí, že představuje zcela unikátní a intuitivní bytost. Po jeho instalaci se seznamuje se „Samanthou", umělou inteligencí s milým ženským hlasem (Scarlett Johansson), která má zajímavé postřehy, je citlivá a překvapivě vtipná. Jak její potřeby a požadavky rostou společně s těmi jeho, mění se jejich přátelství ve skutečnou vzájemnou lásku. (csfd.cz, Falcon)',
-    premiera: '2013-12-18',
+    premiera: '2023-12-18',
   },
   {
     id: 'rrrrrrr',
@@ -106,108 +106,31 @@ const filmy = [
 ];
 
 const currentMovie = window.location.hash.slice(1);
+const detailFilmu = document.querySelector('#detail-filmu');
 
 filmy.forEach((film) => {
   if (film.id.includes(currentMovie)) {
-    document.querySelector('#detail-filmu').innerHTML += `
-	<div class="row g-0">
-	<div class="col-md-5">
-		<img
-			src=${film.plakat.url}
-			alt="plakát"
-			class="img-fluid rounded-start"
-			width="663"
-			height="909"
-		/>
-	</div>
-	<div class="col-md-7">
-		<div class="card-body">
-			<h5 class="card-title">${film.nazev}</h5>
-			<p class="card-text">${film.popis}</p>
-			<p class="card-text">
-				<small class="text-muted" id="premiera"
-					>Premiéra <strong>${film.premiera}</strong>, což je za 24
-					dní.</small
-				>
-			</p>
-			<h6>Hodnocení</h6>
-			<div class="stars">
-				<button
-					class="far fa-star button-star"
-					data-mdb-toggle="tooltip"
-					title="Nic moc"
-				>
-					1
-				</button>
-				<button
-					class="far fa-star button-star"
-					data-mdb-toggle="tooltip"
-					title="Ucházející"
-				>
-					2
-				</button>
-				<button
-					class="far fa-star button-star"
-					data-mdb-toggle="tooltip"
-					title="Dobrý"
-				>
-					3
-				</button>
-				<button
-					class="far fa-star button-star"
-					data-mdb-toggle="tooltip"
-					title="Skvělý"
-				>
-					4
-				</button>
-				<button
-					class="far fa-star button-star"
-					data-mdb-toggle="tooltip"
-					title="Úžasný"
-				>
-					5
-				</button>
-			</div>
-			
-			
-			<h6 class="mt-4">Poznámka</h6>
-			<form id="note-form">
-				<div class="row">
-					<div class="col-md-6 col-lg-7 col-xl-8 mb-2">
-						<div class="form-outline">
-							<textarea
-								class="form-control"
-								id="message-input"
-								rows="4"
-							></textarea>
-							<label class="form-label" for="message-input"
-								>Text poznámky</label
-							>
-						</div>
-					</div>
-					<div class="col-md-6 col-lg-5 col-xl-4">
-						<div class="form-check d-flex justify-content-center mb-2">
-							<input
-								class="form-check-input me-2 mb-2"
-								type="checkbox"
-								value=""
-								id="terms-checkbox"
-							/>
-							<label class="form-check-label" for="terms-checkbox">
-								Souhlasím se všeobecnými podmínky užívání.
-							</label>
-						</div>
-						<button type="submit" class="btn btn-primary btn-block">
-							Uložit
-						</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
-	`;
+    detailFilmu.querySelector('.img-fluid').src = film.plakat.url;
+    detailFilmu.querySelector('.card-title').textContent = `${film.nazev}`;
+    detailFilmu.querySelector('.card-text').textContent = `${film.popis}`;
+
+    const premieraElm = detailFilmu.querySelector('#premiera');
+    const premieraDen = `${dayjs(film.premiera).format('D. M. YYYY')}`;
+    const pocetDniPremiera = dayjs(film.premiera).diff(dayjs(), 'days');
+    // console.log(premieraDen);
+    // console.log(pocetDniPremiera);
+
+    if (pocetDniPremiera < 0) {
+      premieraElm.innerHTML = `Premiéra <strong>${premieraDen}</strong>, což bylo před ${-pocetDniPremiera} dny.`;
+    } else if (pocetDniPremiera === 0) {
+      premieraElm.innerHTML = `Premiéra <strong>${premieraDen}</strong>, což je dnes.`;
+    } else {
+      premieraElm.innerHTML = `Premiéra <strong>${premieraDen}</strong>, což je za ${pocetDniPremiera} dní.`;
+    }
   }
 });
+
+//Bonus: Detail filmu
 
 document.querySelector('#note-form').addEventListener('submit', (event) => {
   event.preventDefault();
